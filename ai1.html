@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zaiks Giriş</title>
+<style>
+:root{
+  --bg-box:#161b22cc;
+  --text:#ffffff;
+  --button-bg1:#238636;
+  --button-bg2:#2ea043;
+  --beta-bg1:#7c3aed;
+  --beta-bg2:#a855f7;
+}
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  font-family:Arial, sans-serif;
+  background:#000;
+}
+.bg{
+  position:fixed; inset:0;
+  background:url('1.gif') center/cover no-repeat;
+  z-index:-2;
+  filter:brightness(0.65);
+}
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.35);
+  z-index:-1;
+}
+.box{
+  background:var(--bg-box);
+  padding:34px;
+  width:360px;
+  text-align:center;
+  border-radius:14px;
+  backdrop-filter:blur(6px);
+  box-shadow:0 0 30px #000;
+}
+.box h2{ margin:0 0 18px; font-size:24px; color:var(--text); }
+.btn{ width:100%; padding:12px; margin-top:10px; border:0; border-radius:10px; font-size:17px; cursor:pointer; color:#fff; background:linear-gradient(45deg,var(--button-bg1),var(--button-bg2)); }
+.btn.beta{ background:linear-gradient(45deg,var(--beta-bg1),var(--beta-bg2)); }
+
+/* küçük overlay (autoplay engellendiğinde görünür) */
+#tapOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+#tapOverlay .card{
+  background:rgba(0,0,0,0.8);
+  color:white;
+  padding:18px 22px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 6px 25px rgba(0,0,0,0.6);
+}
+#tapOverlay .card button{
+  margin-top:12px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:8px;
+  border:0;
+  cursor:pointer;
+  background:#238636;
+  color:#fff;
+}
+
+/* ufak uyarı alt metin */
+.hint{ margin-top:8px; font-size:13px; color:#ddd; opacity:.9; }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<!-- audio element (doğru dosya/kök dizin) -->
+<audio id="bgm" src="1.mp3" loop preload="auto"></audio>
+
+<div class="box">
+  <h2>Zaiks Yapay Zeka</h2>
+  <button class="btn" onclick="location.href='ai.html'">Zaiks 0.2</button>
+  <button class="btn beta" onclick="location.href='ai03.html'">Zaiks 0.3 (Beta)</button>
+  <div class="hint">Müzik otomatik başlatılmaya çalışılıyor. Eğer tarayıcın izin vermezse ekrana dokun yeter.</div>
+</div>
+
+<!-- autoplay engellenirse gösterilecek overlay -->
+
+    
+    <div style="margin-top:8px; font-size:14px; color:#ddd"></div>
+    <button id="resumeBtn"></button>
+  </div>
+</div>
+
+<script>
+  const audio = document.getElementById('bgm');
+  const overlay = document.getElementById('tapOverlay');
+  const resumeBtn = document.getElementById('resumeBtn');
+
+  // Deneme: sayfa yüklenince çalmayı dene
+  window.addEventListener('load', ()=> {
+    // bazı tarayıcılarda load anında play() promise döner
+    audio.play().then(()=>{
+      console.log('Otomatik oynadı.');
+      // oynadıysa overlay'i kapat
+      overlay.style.display = 'none';
+    }).catch((err)=>{
+      console.log('Autoplay engellendi veya hata:', err);
+      // autoplay engellendiyse overlay göster
+      overlay.style.display = 'flex';
+    });
+  });
+
+  // Overlay üzerindeki buton ya da sayfanın herhangi bir tıklamasıyla ses başlat
+  function tryStartAudio(){
+    audio.play().then(()=> {
+      console.log('Kullanıcı etkileşimiyle ses başladı.');
+      overlay.style.display = 'none';
+    }).catch(err=>{
+      console.log('Başlatılamadı:', err);
+    });
+  }
+
+  resumeBtn.addEventListener('click', tryStartAudio);
+  // Ayrıca tüm body tıklamalarında deneyelim (tek seferlik)
+  document.body.addEventListener('click', function oncePlay(){
+    if(!audio.paused){ document.body.removeEventListener('click', oncePlay); return; }
+    tryStartAudio();
+    // kaldırmak için:
+    document.body.removeEventListener('click', oncePlay);
+  });
+
+  // Ek: mobil Safari / bazı tarayıcılar için dokunma + kısa ses tetiklemesi
+  // (Çok nadiren gerekebilir)
+</script>
+
+</body>
+</html>

@@ -1,30 +1,148 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset=UTF-8><title>Giriş</title><style>
-bOdY{background:#0d1117;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
-.xY3{background:#161b22;padding:25px;border-radius:10px;width:320px;text-align:center;box-shadow:0 0 15px #000}
-iNpUt{width:90%;padding:10px;margin-top:10px;background:#0d1117;border:1px solid #30363d;color:#fff;border-radius:6px}
-BuTtOn{width:95%;padding:12px;margin-top:15px;background:#238636;border:0;border-radius:6px;color:#fff;cursor:pointer;font-size:16px;transition:.2s}
-BuTtOn:hover{background:#2ea043}
-.err0r{margin-top:10px;color:#ff5555;font-size:14px;display:none}
-</style></head><body>
-<div class=xY3><h2>Yapay Zeka Girişi</h2>
-<input id=_u1 pLaCeHoLdEr="Kullanıcı adı">
-<input id=_u2 type=pAsSwOrD pLaCeHoLdEr="Şifre">
-<button onclick="___X0x()">Giriş Yap</button>
-<div id=_eR class=err0r>Kullanıcı adı veya şifre yanlış!</div>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zaiks Giriş</title>
+<style>
+:root{
+  --bg-box:#161b22cc;
+  --text:#ffffff;
+  --button-bg1:#238636;
+  --button-bg2:#2ea043;
+  --beta-bg1:#7c3aed;
+  --beta-bg2:#a855f7;
+}
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  font-family:Arial, sans-serif;
+  background:#000;
+}
+.bg{
+  position:fixed; inset:0;
+  background:url('1.gif') center/cover no-repeat;
+  z-index:-2;
+  filter:brightness(0.65);
+}
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.35);
+  z-index:-1;
+}
+.box{
+  background:var(--bg-box);
+  padding:34px;
+  width:360px;
+  text-align:center;
+  border-radius:14px;
+  backdrop-filter:blur(6px);
+  box-shadow:0 0 30px #000;
+}
+.box h2{ margin:0 0 18px; font-size:24px; color:var(--text); }
+.btn{ width:100%; padding:12px; margin-top:10px; border:0; border-radius:10px; font-size:17px; cursor:pointer; color:#fff; background:linear-gradient(45deg,var(--button-bg1),var(--button-bg2)); }
+.btn.beta{ background:linear-gradient(45deg,var(--beta-bg1),var(--beta-bg2)); }
+
+/* küçük overlay (autoplay engellendiğinde görünür) */
+#tapOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+#tapOverlay .card{
+  background:rgba(0,0,0,0.8);
+  color:white;
+  padding:18px 22px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 6px 25px rgba(0,0,0,0.6);
+}
+#tapOverlay .card button{
+  margin-top:12px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:8px;
+  border:0;
+  cursor:pointer;
+  background:#238636;
+  color:#fff;
+}
+
+/* ufak uyarı alt metin */
+.hint{ margin-top:8px; font-size:13px; color:#ddd; opacity:.9; }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="overlay"></div>
+
+<!-- audio element (doğru dosya/kök dizin) -->
+<audio id="bgm" src="1.mp3" loop preload="auto"></audio>
+
+<div class="box">
+  <h2>Zaiks Yapay Zeka</h2>
+  <button class="btn" onclick="location.href='ai.html'">Zaiks 0.2</button>
+  <button class="btn beta" onclick="location.href='ai03.html'">Zaiks 0.3 (Beta)</button>
+  <div class="hint"></div>
+</div>
+
+<!-- autoplay engellenirse gösterilecek overlay -->
+
+    
+    <div style="margin-top:8px; font-size:14px; color:#ddd"></div>
+    <button id="resumeBtn"></button>
+  </div>
 </div>
 
 <script>
-(function(){
-    const __O00O0O0O = document;
-    window["___X0x"] = function(){
-        let q = __O00O0O0O.getElementById("_u1")["value"].toLowerCase().trim(),
-            w = __O00O0O0O.getElementById("_u2")["value"].toLowerCase().trim(),
-            z = (q=="beta" && w=="beta");
-        z ? (window["loc"+"ation"]["href"]="ai1.html")
-          : (__O00O0O0O.getElementById("_eR").style["display"]="block");
-    };
-})();
+  const audio = document.getElementById('bgm');
+  const overlay = document.getElementById('tapOverlay');
+  const resumeBtn = document.getElementById('resumeBtn');
+
+  // Deneme: sayfa yüklenince çalmayı dene
+  window.addEventListener('load', ()=> {
+    // bazı tarayıcılarda load anında play() promise döner
+    audio.play().then(()=>{
+      console.log('Otomatik oynadı.');
+      // oynadıysa overlay'i kapat
+      overlay.style.display = 'none';
+    }).catch((err)=>{
+      console.log('Autoplay engellendi veya hata:', err);
+      // autoplay engellendiyse overlay göster
+      overlay.style.display = 'flex';
+    });
+  });
+
+  // Overlay üzerindeki buton ya da sayfanın herhangi bir tıklamasıyla ses başlat
+  function tryStartAudio(){
+    audio.play().then(()=> {
+      console.log('Kullanıcı etkileşimiyle ses başladı.');
+      overlay.style.display = 'none';
+    }).catch(err=>{
+      console.log('Başlatılamadı:', err);
+    });
+  }
+
+  resumeBtn.addEventListener('click', tryStartAudio);
+  // Ayrıca tüm body tıklamalarında deneyelim (tek seferlik)
+  document.body.addEventListener('click', function oncePlay(){
+    if(!audio.paused){ document.body.removeEventListener('click', oncePlay); return; }
+    tryStartAudio();
+    // kaldırmak için:
+    document.body.removeEventListener('click', oncePlay);
+  });
+
+  // Ek: mobil Safari / bazı tarayıcılar için dokunma + kısa ses tetiklemesi
+  // (Çok nadiren gerekebilir)
 </script>
 
-</body></html>
-
+</body>
+</html>
